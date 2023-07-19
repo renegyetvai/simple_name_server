@@ -1,3 +1,5 @@
+package example;
+
 import communication.format.Message;
 import communication.udp.client.UDPClient;
 import communication.udp.server.UDPServer;
