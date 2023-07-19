@@ -137,23 +137,27 @@ public class NameData {
         }
     }
 
-    public void removeNode(String fullName, removeType removeType) {
+    public Boolean removeNode(String fullName, removeType removeType) {
         Node node = nodeMap.get(fullName);
         if (node == null) {
-            return;
+            return false;
         }
         if (removeType == NameData.removeType.FORCE) {
             nodeMap.remove(fullName);
+            return true;
         } else if (removeType == NameData.removeType.NORMAL) {
             if (node.getNodeType() == Node.NodeType.LEAF) {
                 nodeMap.remove(fullName);
+                return true;
             } else if (node.getNodeType() == Node.NodeType.NODE) {
                 nodeMap.remove(fullName);
                 for (Node child : node.getChildren()) {
                     removeNode(child.getFullName(), NameData.removeType.NORMAL);
                 }
+                return true;
             }
         }
+        return false;
     }
 
     // Method that traverses the tree and returns the child nodes of the given node.

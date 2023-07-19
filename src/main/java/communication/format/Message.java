@@ -5,24 +5,38 @@ import java.nio.charset.StandardCharsets;
 
 public class Message {
     public enum messageTypes {
-        MSG_REGISTER, MSG_RESOLVE_REQUEST, MSG_RESOLVE_REPLY, MSG_RESOLVE_SERVICE_ERROR, MSG_REGISTER_REPLY, MSG_ERROR;
+        MSG_REGISTER_REQUEST, MSG_REGISTER_REPLY, MSG_REGISTER_ERROR,
+        MSG_RESOLVE_REQUEST, MSG_RESOLVE_REPLY, MSG_RESOLVE_ERROR,
+        MSG_DELETE_REQUEST, MSG_DELETE_REPLY, MSG_DELETE_ERROR, MSG_ERROR;
 
         int getValue() {
             switch (this) {
-                case MSG_REGISTER -> {
+                case MSG_REGISTER_REQUEST -> {
                     return 1;
                 }
-                case MSG_RESOLVE_REQUEST -> {
+                case MSG_REGISTER_REPLY -> {
                     return 2;
                 }
-                case MSG_RESOLVE_REPLY -> {
+                case MSG_REGISTER_ERROR -> {
                     return 3;
                 }
-                case MSG_RESOLVE_SERVICE_ERROR -> {
+                case MSG_RESOLVE_REQUEST -> {
                     return 4;
                 }
-                case MSG_REGISTER_REPLY -> {
+                case MSG_RESOLVE_REPLY -> {
                     return 5;
+                }
+                case MSG_RESOLVE_ERROR -> {
+                    return 6;
+                }
+                case MSG_DELETE_REQUEST -> {
+                    return 7;
+                }
+                case MSG_DELETE_REPLY -> {
+                    return 8;
+                }
+                case MSG_DELETE_ERROR -> {
+                    return 9;
                 }
                 default -> {
                     System.err.println("Unknown message type.");
@@ -32,7 +46,7 @@ public class Message {
         }
 
         public static int getMessageTypeSize() {
-            return Integer.toString(messageTypes.MSG_REGISTER_REPLY.getValue()).getBytes(StandardCharsets.UTF_8).length;
+            return Integer.toString(messageTypes.MSG_DELETE_ERROR.getValue()).getBytes(StandardCharsets.UTF_8).length;
         }
     }
 
@@ -55,23 +69,35 @@ public class Message {
     public messageTypes getMessageTypeEnum(int type) {
         switch (type) {
             case 1 -> {
-                return messageTypes.MSG_REGISTER;
+                return messageTypes.MSG_REGISTER_REQUEST;
             }
             case 2 -> {
-                return messageTypes.MSG_RESOLVE_REQUEST;
+                return messageTypes.MSG_REGISTER_REPLY;
             }
             case 3 -> {
-                return messageTypes.MSG_RESOLVE_REPLY;
+                return messageTypes.MSG_REGISTER_ERROR;
             }
             case 4 -> {
-                return messageTypes.MSG_RESOLVE_SERVICE_ERROR;
+                return messageTypes.MSG_RESOLVE_REQUEST;
             }
             case 5 -> {
-                return messageTypes.MSG_REGISTER_REPLY;
+                return messageTypes.MSG_RESOLVE_REPLY;
+            }
+            case 6 -> {
+                return messageTypes.MSG_RESOLVE_ERROR;
+            }
+            case 7 -> {
+                return messageTypes.MSG_DELETE_REQUEST;
+            }
+            case 8 -> {
+                return messageTypes.MSG_DELETE_REPLY;
+            }
+            case 9 -> {
+                return messageTypes.MSG_DELETE_ERROR;
             }
             default -> {
                 System.err.println("Unknown message type.");
-                return messageTypes.MSG_RESOLVE_SERVICE_ERROR;
+                return messageTypes.MSG_ERROR;
             }
         }
     }

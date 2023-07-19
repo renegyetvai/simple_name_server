@@ -1,6 +1,7 @@
 package communication.udp.server;
 
 import communication.format.Message;
+import service.IService;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -13,12 +14,14 @@ import java.util.Scanner;
 public class UDPServer implements Runnable {
 
     private final byte[] buffer = new byte[512];
+    private final IService serviceProvider;
     private final int port;
     private DatagramSocket serverSocket;
     private Boolean terminate = false;
 
-    public UDPServer(int port) {
+    public UDPServer(int port, IService serviceProvider) {
         this.port = port;
+        this.serviceProvider = serviceProvider;
     }
 
     /**
@@ -93,15 +96,16 @@ public class UDPServer implements Runnable {
             try {
                 serverSocket.receive(packet);
 
-                // Routine Service receive
-                process(packet);
+                // Service provider processes the message
+                Message answer = serviceProvider.process(packet);
 
-                // Reset packet and send message with type MSG_REPLY back to client
+                // Reset packet and send answer back to client
                 packet.setAddress(packet.getAddress());
                 packet.setPort(packet.getPort());
                 packet.setLength(buffer.length);
-                packet.setData(new Message(Message.messageTypes.MSG_RESOLVE_REQUEST, "reply").getBytes());
+                packet.setData(answer.getBytes());
 
+                System.err.println("Sending answer to client...");
                 serverSocket.send(packet);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -110,16 +114,6 @@ public class UDPServer implements Runnable {
             // Clean buffer
             Arrays.fill(buffer, (byte) 0);
         }
-    }
-
-    private void process(DatagramPacket packet) {
-        // create message from packet
-        byte[] data = packet.getData();
-        Message msg = Message.readFromBytes(data);
-
-        // print info
-        System.out.println("Received message type: " + msg.getMessageType());
-        System.out.println("Received message payload: " + msg.getPayload());
     }
 
     /**
@@ -142,13 +136,9 @@ public class UDPServer implements Runnable {
         System.err.println("Server socket created on port " + port);
     }
 
-    public DatagramSocket getServerSocket() {
-        return serverSocket;
-    }
-
     @Override
     public void run() {
-        System.err.println("Starting server...");
+        System.err.println("Starting UDP server...");
 
         // Routine
         try {

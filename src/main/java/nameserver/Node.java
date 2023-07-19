@@ -12,7 +12,7 @@ public class Node {
         ROOT
     }
 
-    private String name;
+    private final String name;
     private String ip;
     private int port;
     private NodeType nodeType;
@@ -57,18 +57,6 @@ public class Node {
 
     public int getPort() {
         return port;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
     }
 
     public NodeType getNodeType() {
