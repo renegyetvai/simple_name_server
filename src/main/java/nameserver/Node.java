@@ -1,6 +1,7 @@
 package nameserver;
 
 import java.util.HashMap;
+import java.util.List;
 
 import static nameserver.NameData.getRoot;
 
@@ -33,6 +34,9 @@ public class Node {
         } else {
             // Check if the parent is a node or a leaf. If it is a leaf, don't add it to the children.
             if (this.parent.nodeType != NodeType.LEAF) {
+                if (this.parent.children == null) {
+                    this.parent.children = new HashMap<>();
+                }
                 this.parent.children.put(this.getFullName(), this);
             } else {
                 // Indicate that the node already exists.
@@ -96,5 +100,14 @@ public class Node {
             children = new HashMap<>();
         }
         children.put(name, child);
+    }
+
+    public void setChildren(List<Node> children) {
+        if (this.children == null) {
+            this.children = new HashMap<>();
+        }
+        for (Node child : children) {
+            this.children.put(child.getFullName(), child);
+        }
     }
 }
