@@ -54,12 +54,12 @@ public class DataLogicTest {
         // remove leaf one and test again
         testNameData.removeNode("root.testChild.testLeafOne", NameData.removeType.NORMAL);
         assertEquals(1, testNameData.getNode("root").getChildren().length);
-        assertEquals(2, testNameData.getNode("root.testChild").getChildren().length);
+        assertEquals(1, testNameData.getNode("root.testChild").getChildren().length);
         assertNull(testNameData.getNode("root.testChild.testLeafTwo").getChildren());
 
         // remove child and test again
         testNameData.removeNode("root.testChild", NameData.removeType.NORMAL);
         assertEquals(1, testNameData.getNode("root").getChildren().length);
-        assertNull(testNameData.getNode("root.testChild.testLeafTwo").getChildren());
+        assertNull(testNameData.getNode("root.testLeafTwo").getChildren());
     }
 }

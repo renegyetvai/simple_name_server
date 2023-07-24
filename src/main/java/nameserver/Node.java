@@ -99,6 +99,8 @@ public class Node {
         if (children == null) {
             children = new HashMap<>();
         }
+        // clear existing children and add the new ones
+        children.clear();
         children.put(name, child);
     }
 
@@ -106,8 +108,17 @@ public class Node {
         if (this.children == null) {
             this.children = new HashMap<>();
         }
+        // clear existing children and add the new ones
+        this.children.clear();
         for (Node child : children) {
             this.children.put(child.getFullName(), child);
         }
+    }
+
+    public void addChild(String name, Node child) {
+        if (children == null) {
+            children = new HashMap<>();
+        }
+        children.put(name, child);
     }
 }

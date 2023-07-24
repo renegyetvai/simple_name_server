@@ -91,20 +91,24 @@ public class NameData {
         }
         if (removeType == NameData.removeType.FORCE) {
             nodeMap.remove(fullName);
+            removeNodeFromParentsChildren(node);
             return true;
         } else if (removeType == NameData.removeType.NORMAL) {
             if (node.getNodeType() == Node.NodeType.LEAF) {
                 nodeMap.remove(fullName);
-                removeNodeFromParentsChildren(node); // TODO: check if this works
+                removeNodeFromParentsChildren(node);
                 return true;
             } else if (node.getNodeType() == Node.NodeType.NODE) {
                 nodeMap.remove(fullName);
                 for (Node child : node.getChildren()) {
-                    removeNode(child.getFullName(), NameData.removeType.NORMAL);
-                    // set parent of child to parent of node
-                    child.setParent(node.getParent()); // TODO: check if this works
+                    // rename key in nodeMap for child
+                    nodeMap.remove(child.getFullName());
+                    nodeMap.put(node.getParent().getName() + "." + child.getName(), child);
+                    // set parent of child to parent of node and add child to parent's children
+                    child.setParent(node.getParent());
+                    node.getParent().addChild(child.getName(), child);
                 }
-                removeNodeFromParentsChildren(node); // TODO: check if this works
+                removeNodeFromParentsChildren(node);
                 return true;
             }
         }
