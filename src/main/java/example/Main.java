@@ -3,15 +3,49 @@ package example;
 import communication.format.Message;
 import communication.udp.client.UDPClient;
 import communication.udp.server.UDPServer;
+import log.CustomFilter;
+import log.CustomFormatter;
+import log.CustomHandler;
 import nameserver.NameService;
+import nameserver.Node;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.util.logging.*;
 
 public class Main {
+    public static Logger logger = Logger.getLogger(Main.class.getName());
+
     public static void main(String[] args) throws InterruptedException, IOException {
+        // --------- LOGGER ---------
+        try {
+            LogManager.getLogManager().readConfiguration(new FileInputStream("src/main/resources/log/config/customLogging.properties"));
+        } catch (SecurityException | IOException e1) {
+            e1.printStackTrace();
+        }
+
+        logger.addHandler(new ConsoleHandler());
+        // Adding custom handler
+        logger.addHandler(new CustomHandler());
+
+        logger.setLevel(Level.FINE);
+
+        try {
+            // FileHandler file name with max size and number of log files limit
+            String timeStamp = new java.text.SimpleDateFormat("dd-MM-yyyy_HH-mm-ss").format(new java.util.Date());
+            Handler fileHandler = new FileHandler("src/main/resources/log/dump/CustomLogger_" + timeStamp + ".log", 2000, 5);
+            fileHandler.setFormatter(new CustomFormatter());
+            // Setting custom filter for FileHandler
+            fileHandler.setFilter(new CustomFilter());
+            logger.addHandler(fileHandler);
+        } catch (SecurityException | IOException e) {
+            e.printStackTrace();
+        }
+        // --------- LOGGER END ---------
+
         if (args.length < 1) {
-            System.out.println("Missing arguments");
+            logger.log(Level.SEVERE, "Missing arguments");
             System.exit(0);
         }
 
@@ -19,7 +53,7 @@ public class Main {
             case "-s" -> {
                 NameService serviceProvider = new NameService("local");
                 Thread serverThread = new Thread(new UDPServer(5555, serviceProvider));
-                System.out.println("Starting nameserver");
+                logger.log(Level.INFO, "Starting server");
                 serverThread.start();
                 serverThread.join();
             }
@@ -27,10 +61,10 @@ public class Main {
                 DatagramPacket answerOne, answerTwo, answerThree, answerFour;
                 Message[] messages = new Message[4];
 
-                System.out.println("Starting client");
+                logger.log(Level.INFO, "Starting client");
                 UDPClient UDPClient = new UDPClient("localhost", 5555);
 
-                System.out.println("Sending request message");
+                logger.log(Level.INFO, "Sending messages");
                 answerOne = UDPClient.sendPacket(new Message(Message.messageTypes.MSG_REGISTER_REQUEST, "home\\local 1.2.3.4 8091"));
                 answerTwo = UDPClient.sendPacket(new Message(Message.messageTypes.MSG_RESOLVE_REQUEST, "home\\local"));
                 answerThree = UDPClient.sendPacket(new Message(Message.messageTypes.MSG_REGISTER_REQUEST, "rg\\home\\local 1.2.3.5 8092"));
@@ -46,12 +80,12 @@ public class Main {
 
                 for (Message message : messages) {
                     if (message == null) {
-                        System.out.println("Message is null");
+                        logger.log(Level.SEVERE, "Message is null");
                         continue;
                     }
-                    System.out.println("Received answer: " + "type = " + message.getMessageType() + " & content = '" + message.getPayload() + "'");
+                    logger.log(Level.INFO, "Received answer: " + "type = " + message.getMessageType() + " & content = '" + message.getPayload() + "'");
                 }
-                System.out.println("Client 1 done");
+                System.out.println("Client finished");
             }
             default -> System.out.println("Provided parameter was not found!\n " +
                     "Please enter parameter '-s' to start as server or '-c' to start as client!");

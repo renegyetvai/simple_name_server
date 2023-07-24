@@ -1,16 +1,49 @@
 package nameserver;
 
 import communication.format.Message;
+import log.CustomFilter;
+import log.CustomFormatter;
+import log.CustomHandler;
 import service.IService;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.DatagramPacket;
+import java.util.logging.*;
 
 public class NameService implements IService {
+    public static Logger logger = Logger.getLogger(Node.class.getName());
     private final static int UDP_BUFFER_SIZE = 512;
     private final NameData nameData;
 
     public NameService(String rootName) {
         nameData = new NameData(rootName);
+
+        // --------- LOGGER ---------
+        try {
+            LogManager.getLogManager().readConfiguration(new FileInputStream("src/main/resources/log/config/customLogging.properties"));
+        } catch (SecurityException | IOException e1) {
+            e1.printStackTrace();
+        }
+
+        logger.addHandler(new ConsoleHandler());
+        // Adding custom handler
+        logger.addHandler(new CustomHandler());
+
+        logger.setLevel(Level.FINE);
+
+        try {
+            // FileHandler file name with max size and number of log files limit
+            String timeStamp = new java.text.SimpleDateFormat("dd-MM-yyyy_HH-mm-ss").format(new java.util.Date());
+            Handler fileHandler = new FileHandler("src/main/resources/log/dump/CustomLogger_" + timeStamp + ".log", 2000, 5);
+            fileHandler.setFormatter(new CustomFormatter());
+            // Setting custom filter for FileHandler
+            fileHandler.setFilter(new CustomFilter());
+            logger.addHandler(fileHandler);
+        } catch (SecurityException | IOException e) {
+            e.printStackTrace();
+        }
+        // --------- LOGGER END ---------
     }
 
     @Override
@@ -40,21 +73,23 @@ public class NameService implements IService {
                 while (registerAnswer.length() < UDP_BUFFER_SIZE) {
                     registerAnswer.append("\0");
                 }
+                logger.log(Level.INFO, "Registering " + payload.split(" ")[0] + " with IP " + payload.split(" ")[1] + " and port " + payload.split(" ")[2]);
                 return new Message(Message.messageTypes.MSG_REGISTER_REPLY, registerAnswer.toString());
             }
             case MSG_RESOLVE_REQUEST -> {
                 Node resolveAnswer = resolveName(payload);
                 assert resolveAnswer != null;
                 String serviceAttributes = resolveAnswer.getName() + " " + resolveAnswer.getIp() + " " + resolveAnswer.getPort();
+                logger.log(Level.INFO, "Resolving " + payload + " to " + serviceAttributes);
                 return new Message(Message.messageTypes.MSG_RESOLVE_REPLY, serviceAttributes);
             }
             case MSG_DELETE_REQUEST -> {
                 boolean deleteAnswer = deleteName(payload);
                 if (deleteAnswer) {
-                    System.err.println("Successfully deleted " + payload);
+                    logger.log(Level.INFO, "Deleting " + payload);
                     return new Message(Message.messageTypes.MSG_DELETE_REPLY, "Successfully deleted " + payload);
                 } else {
-                    System.err.println("Failed to delete " + payload);
+                    logger.log(Level.INFO, "Failed to delete " + payload);
                     return new Message(Message.messageTypes.MSG_DELETE_ERROR, "Failed to delete " + payload);
                 }
             }
