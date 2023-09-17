@@ -42,7 +42,7 @@ pipeline {
         }
         stage('Docker Build') {
             steps {
-                sh 'docker build -t rgyetvai/simple_name_server-alpine:latest .'
+                docker.build('rgyetvai/simple_name_server-alpine:latest', '-f Dockerfile.alpine .')
             }
         }
         stage('Docker Login') {
