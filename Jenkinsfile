@@ -44,17 +44,14 @@ pipeline {
         stage('Docker Build & Push') {
             steps {
                 script {
-                    sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'
-                    sh 'docker build -t rgyetvai/simple_name_server:latest .'
-                    sh 'docker push rgyetvai/simple_name_server:latest'
+                    def dockerServer = docker.server('tcp://10.0.10.115:2375')
+                    def dockerImage = docker.build("rgyetvai/simple_name_server:${env.BUILD_NUMBER}", "-f Dockerfile .")
+                    dockerImage.push()
                 }
             }
         }
     }
     post {
-        always {
-            sh 'docker logout'
-        }
         success {
             echo 'Build Success'
         }
