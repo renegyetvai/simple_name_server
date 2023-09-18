@@ -44,15 +44,17 @@ pipeline {
         stage('Docker Build & Push') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'rgyetvai-dockerhub', toolName: 'docker') {
-                        sh 'docker build -t rgyetvai/simple_name_server:latest .'
-                        sh 'docker push rgyetvai/simple_name_server:latest'
-                    }
+                    sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'
+                    sh 'docker build -t rgyetvai/simple_name_server:latest .'
+                    sh 'docker push rgyetvai/simple_name_server:latest'
                 }
             }
         }
     }
     post {
+        always {
+            sh 'docker logout'
+        }
         success {
             echo 'Build Success'
         }
