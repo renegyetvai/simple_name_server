@@ -5,6 +5,7 @@ pipeline {
     }
     tools {
         gradle 'gradle751'
+        dockerTool 'docker'
     }
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
