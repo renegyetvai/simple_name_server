@@ -40,19 +40,14 @@ pipeline {
                 sh './gradlew build --scan'
             }
         }
-        stage('Docker Build') {
+        stage('Docker Build & Push') {
             steps {
-                sh 'docker build -t rgyetvai/simple_name_server-alpine:latest .'
-            }
-        }
-        stage('Docker Login') {
-            steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-            }
-        }
-        stage('Docker Push') {
-            steps {
-                sh 'docker push rgyetvai/simple_name_server-alpine:latest'
+                script {
+                    withDockerRegistry(credentialsId: 'rgyetvai-dockerhub') {
+                        sh 'docker build -t rgyetvai/simple_name_server:latest .'
+                        sh 'docker push'
+                    }
+                }
             }
         }
     }
