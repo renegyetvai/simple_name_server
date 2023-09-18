@@ -43,7 +43,7 @@ pipeline {
         stage('Docker Build & Push') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'rgyetvai-dockerhub') {
+                    withDockerRegistry(credentialsId: 'rgyetvai-dockerhub', toolName: 'docker') { {
                         sh 'docker build -t rgyetvai/simple_name_server:latest .'
                         sh 'docker push'
                     }
