@@ -49,6 +49,11 @@ pipeline {
                 }
             }
         }
+        stage('Scan Image Vulnerabilities') {
+            steps {
+                sh 'trivy image --exit-code 1 --severity MEDIUM,HIGH,CRITICAL rgyetvai/simple_name_server:latest'
+            }
+        }
     }
     post {
         always {
