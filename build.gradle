@@ -22,6 +22,12 @@ test {
     useJUnitPlatform()
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'example.Main'
+    }
+}
+
 run {
     standardInput = System.in
 }
