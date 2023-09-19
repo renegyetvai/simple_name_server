@@ -31,7 +31,8 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                     sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=simple_name_server \
                     -Dsonar.java.binaries=. \
-                    -Dsonar.projectKey=simple_name_server '''
+                    -Dsonar.projectKey=simple_name_server \
+                    -Dsonar.exclusions=dependency-check-report.html '''
                 }
             }
         }
