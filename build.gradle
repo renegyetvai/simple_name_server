@@ -3,10 +3,11 @@ plugins {
     id 'application'
 }
 
+// general information
 group 'org.example'
 version '1.0-SNAPSHOT'
 
-// add
+// sets main class
 mainClassName = 'example.Main'
 
 repositories {
@@ -23,8 +24,14 @@ test {
 }
 
 jar {
+    archiveVersion = '1.0.0'
+    archiveBaseName = 'simple_name_server'
+    //from('src/main/resources') {
+    //    include 'log/**/*.properties'
+    //}
+
     manifest {
-        attributes 'Main-Class': 'example.Main'
+        attributes 'Main-Class': 'example.Main', 'Implementation-Title': 'Simple Name Server', 'Implementation-Version': archiveVersion
     }
 }
 

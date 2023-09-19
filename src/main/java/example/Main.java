@@ -20,7 +20,7 @@ public class Main {
     public static void main(String[] args) throws InterruptedException, IOException {
         // --------- LOGGER ---------
         try {
-            LogManager.getLogManager().readConfiguration(new FileInputStream("src/main/resources/log/config/customLogging.properties"));
+            LogManager.getLogManager().readConfiguration(new FileInputStream("log/config/customLogging.properties"));
         } catch (SecurityException | IOException e) {
             System.err.println("Failed to read logging configuration file: \n" + e.getMessage());
         }
@@ -34,7 +34,7 @@ public class Main {
         try {
             String timeStamp = new java.text.SimpleDateFormat("dd-MM-yyyy_HH-mm-ss").format(new java.util.Date());
             // Create dump folder if it doesn't exist
-            File dumpFolder = new File("src/main/resources/log/dump");
+            File dumpFolder = new File("log/dump");
             if (!dumpFolder.exists()) {
                 if (dumpFolder.mkdir()) {
                     System.err.println("Created dump folder");
@@ -43,7 +43,7 @@ public class Main {
                 }
             }
             // FileHandler file name with max size and number of log files limit
-            Handler fileHandler = new FileHandler("src/main/resources/log/dump/CustomLogger_" + timeStamp + ".log", 2000, 5);
+            Handler fileHandler = new FileHandler("log/dump/CustomLogger_" + timeStamp + ".log", 2000, 5);
             fileHandler.setFormatter(new CustomFormatter());
             // Setting custom filter for FileHandler
             fileHandler.setFilter(new CustomFilter());
