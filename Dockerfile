@@ -9,12 +9,13 @@ FROM alpine:3.18
 WORKDIR /app
 
 # Install OpenJDK 18
+RUN apk add dumb-init
 RUN apk add --no-cache curl
-RUN curl -LJO "https://github.com/adoptium/temurin18-binaries/releases/download/jdk-18.0.2.1%2B1/OpenJDK18U-jdk_x64_alpine-linux_hotspot_18.0.2.1_1.tar.gz"
-RUN tar -xzf OpenJDK18U-jdk_x64_alpine-linux_hotspot_18.0.2.1_1.tar.gz -C /opt
-RUN rm OpenJDK18U-jdk_x64_alpine-linux_hotspot_18.0.2.1_1.tar.gz
-ENV JAVA_HOME="/opt/jdk-18.0.2.1+1" PATH="${JAVA_HOME}/bin:${PATH}"
+RUN apk add --no-cache openjdk18-jre-headless
 
+RUN addgroup --system javauser && adduser -S -s /bin/false -G javauser javauser
 COPY --from=build /home/gradle/src/build/libs/*.jar app.jar
+RUN chown -R javauser:javauser /app
 
-CMD ["java", "-jar", "app.jar", "-s"]
+USER javauser
+CMD ["dumb-init", "java", "-jar", "app.jar", "-s"]

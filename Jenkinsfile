@@ -40,7 +40,7 @@ pipeline {
                 sh './gradlew build --scan'
             }
         }
-        stage('Docker - Build Container') {
+        stage('Docker - Build Container Image') {
             steps {
                 sh 'docker build -t rgyetvai/simple_name_server:latest .'
             }
