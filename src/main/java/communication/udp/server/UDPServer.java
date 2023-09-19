@@ -52,6 +52,7 @@ public class UDPServer implements Runnable {
             Thread.sleep(5);
         } catch (Exception e) {
             System.err.println("Caught: " + e);
+            Thread.currentThread().interrupt();
         }
         System.err.println("Closed accepterThread");
 
@@ -146,6 +147,7 @@ public class UDPServer implements Runnable {
             this.processManager();
         } catch (InterruptedException e) {
             System.err.println(e.getMessage());
+            Thread.currentThread().interrupt();
         } catch (NoSuchElementException e) {
             System.err.println("CLI not available!");
         }

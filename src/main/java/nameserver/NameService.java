@@ -6,13 +6,14 @@ import log.CustomFormatter;
 import log.CustomHandler;
 import service.IService;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.logging.*;
 
 public class NameService implements IService {
-    public static Logger logger = Logger.getLogger(Node.class.getName());
+    private final static Logger logger = Logger.getLogger(Node.class.getName());
     private final static int UDP_BUFFER_SIZE = 512;
     private final NameData nameData;
 
@@ -22,8 +23,8 @@ public class NameService implements IService {
         // --------- LOGGER ---------
         try {
             LogManager.getLogManager().readConfiguration(new FileInputStream("src/main/resources/log/config/customLogging.properties"));
-        } catch (SecurityException | IOException e1) {
-            e1.printStackTrace();
+        } catch (SecurityException | IOException e) {
+            System.err.println("Failed to read logging configuration file: \n" + e.getMessage());
         }
 
         logger.addHandler(new ConsoleHandler());
@@ -33,15 +34,24 @@ public class NameService implements IService {
         logger.setLevel(Level.FINE);
 
         try {
-            // FileHandler file name with max size and number of log files limit
             String timeStamp = new java.text.SimpleDateFormat("dd-MM-yyyy_HH-mm-ss").format(new java.util.Date());
+            // Create dump folder if it doesn't exist
+            File dumpFolder = new File("src/main/resources/log/dump");
+            if (!dumpFolder.exists()) {
+                if (dumpFolder.mkdir()) {
+                    System.err.println("Created dump folder");
+                } else {
+                    System.err.println("Failed to create dump folder");
+                }
+            }
+            // FileHandler file name with max size and number of log files limit
             Handler fileHandler = new FileHandler("src/main/resources/log/dump/CustomLogger_" + timeStamp + ".log", 2000, 5);
             fileHandler.setFormatter(new CustomFormatter());
             // Setting custom filter for FileHandler
             fileHandler.setFilter(new CustomFilter());
             logger.addHandler(fileHandler);
         } catch (SecurityException | IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to create logging file: \n" + e.getMessage());
         }
         // --------- LOGGER END ---------
     }
