@@ -16,7 +16,7 @@ pipeline {
                 git branch: 'server_cicd', changelog: false, poll: false, url: 'https://github.com/renegyetvai/simple_name_server.git'
             }
         }
-        stage('Compile') {
+        stage('Compile Sources') {
             steps {
                 sh './gradlew clean compileJava'
             }
@@ -35,23 +35,27 @@ pipeline {
                 }
             }
         }
-        stage('Build') {
+        stage('Build Project') {
             steps {
                 sh './gradlew build --scan'
             }
         }
-        stage('Docker Build & Push') {
+        stage('Docker - Build Container') {
+            steps {
+                sh 'docker build -t rgyetvai/simple_name_server:latest .'
+            }
+        }
+        stage('Trivy Image Scan') {
+            steps {
+                sh 'trivy image --exit-code 1 --severity MEDIUM,HIGH,CRITICAL rgyetvai/simple_name_server:latest'
+            }
+        }
+        stage('Docker Push') {
             steps {
                 script {
                     sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'
-                    sh 'docker build -t rgyetvai/simple_name_server:latest .'
                     sh 'docker push rgyetvai/simple_name_server:latest'
                 }
-            }
-        }
-        stage('Scan Image Vulnerabilities') {
-            steps {
-                sh 'trivy image --exit-code 1 --severity MEDIUM,HIGH,CRITICAL rgyetvai/simple_name_server:latest'
             }
         }
     }
