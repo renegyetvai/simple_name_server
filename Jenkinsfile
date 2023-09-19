@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'agent1' }
+    agent { label 'java-docker-node-1' }
     options {
         buildDiscarder(logRotator(numToKeepStr: '5'))
     }
