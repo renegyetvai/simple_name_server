@@ -7,22 +7,22 @@ import log.CustomFilter;
 import log.CustomFormatter;
 import log.CustomHandler;
 import nameserver.NameService;
-import nameserver.Node;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.logging.*;
 
 public class Main {
-    public static Logger logger = Logger.getLogger(Main.class.getName());
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws InterruptedException, IOException {
         // --------- LOGGER ---------
         try {
             LogManager.getLogManager().readConfiguration(new FileInputStream("src/main/resources/log/config/customLogging.properties"));
-        } catch (SecurityException | IOException e1) {
-            e1.printStackTrace();
+        } catch (SecurityException | IOException e) {
+            System.err.println("Failed to read logging configuration file: \n" + e.getMessage());
         }
 
         logger.addHandler(new ConsoleHandler());
@@ -32,15 +32,24 @@ public class Main {
         logger.setLevel(Level.FINE);
 
         try {
-            // FileHandler file name with max size and number of log files limit
             String timeStamp = new java.text.SimpleDateFormat("dd-MM-yyyy_HH-mm-ss").format(new java.util.Date());
+            // Create dump folder if it doesn't exist
+            File dumpFolder = new File("src/main/resources/log/dump");
+            if (!dumpFolder.exists()) {
+                if (dumpFolder.mkdir()) {
+                    System.err.println("Created dump folder");
+                } else {
+                    System.err.println("Failed to create dump folder");
+                }
+            }
+            // FileHandler file name with max size and number of log files limit
             Handler fileHandler = new FileHandler("src/main/resources/log/dump/CustomLogger_" + timeStamp + ".log", 2000, 5);
             fileHandler.setFormatter(new CustomFormatter());
             // Setting custom filter for FileHandler
             fileHandler.setFilter(new CustomFilter());
             logger.addHandler(fileHandler);
         } catch (SecurityException | IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to create logging file: \n" + e.getMessage());
         }
         // --------- LOGGER END ---------
 
@@ -58,19 +67,22 @@ public class Main {
                 serverThread.join();
             }
             case "-c" -> {
-                DatagramPacket answerOne, answerTwo, answerThree, answerFour;
+                DatagramPacket answerOne;
+                DatagramPacket answerTwo;
+                DatagramPacket answerThree;
+                DatagramPacket answerFour;
                 Message[] messages = new Message[4];
 
                 logger.log(Level.INFO, "Starting client");
-                UDPClient UDPClient = new UDPClient("localhost", 5555);
+                UDPClient udpClient = new UDPClient("localhost", 5555);
 
                 logger.log(Level.INFO, "Sending messages");
-                answerOne = UDPClient.sendPacket(new Message(Message.messageTypes.MSG_REGISTER_REQUEST, "home\\local 1.2.3.4 8091"));
-                answerTwo = UDPClient.sendPacket(new Message(Message.messageTypes.MSG_RESOLVE_REQUEST, "home\\local"));
-                answerThree = UDPClient.sendPacket(new Message(Message.messageTypes.MSG_REGISTER_REQUEST, "rg\\home\\local 1.2.3.5 8092"));
-                answerFour = UDPClient.sendPacket(new Message(Message.messageTypes.MSG_RESOLVE_REQUEST, "rg\\home\\local"));
+                answerOne = udpClient.sendPacket(new Message(Message.messageTypes.MSG_REGISTER_REQUEST, "home\\local 1.2.3.4 8091"));
+                answerTwo = udpClient.sendPacket(new Message(Message.messageTypes.MSG_RESOLVE_REQUEST, "home\\local"));
+                answerThree = udpClient.sendPacket(new Message(Message.messageTypes.MSG_REGISTER_REQUEST, "rg\\home\\local 1.2.3.5 8092"));
+                answerFour = udpClient.sendPacket(new Message(Message.messageTypes.MSG_RESOLVE_REQUEST, "rg\\home\\local"));
 
-                UDPClient.close();
+                udpClient.close();
 
                 // Convert the received message from a byte array to a message object.
                 messages[0] = Message.readFromBytes(answerOne.getData());
