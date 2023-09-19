@@ -7,7 +7,6 @@ import log.CustomFilter;
 import log.CustomFormatter;
 import log.CustomHandler;
 import nameserver.NameService;
-import nameserver.Node;
 
 import java.io.FileInputStream;
 import java.io.IOException;
