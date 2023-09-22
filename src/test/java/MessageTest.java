@@ -19,13 +19,13 @@ public class MessageTest {
         byte[] bytes = msg.getBytes();
         Message msg2 = Message.readFromBytes(bytes);
         assertEquals(msg.getMessageType(), msg2.getMessageType());
-        assertEquals(msg.getPayload(), msg2.getPayload());
+        assertEquals(msg.getMessagePayload(), msg2.getMessagePayload());
     }
 
     @Test
     void getPayload() {
         Message msg = new Message(Message.messageTypes.MSG_REGISTER_REQUEST, "root.home 127.0.0.1 80");
-        assertEquals("root.home 127.0.0.1 80", msg.getPayload());
+        assertEquals("root.home 127.0.0.1 80", msg.getMessagePayload());
     }
 
     @Test

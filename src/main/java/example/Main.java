@@ -61,7 +61,7 @@ public class Main {
                         logger.log(Level.SEVERE, "Message is null");
                         continue;
                     }
-                    logger.log(Level.INFO, "Received answer: " + "type = " + message.getMessageType() + " & content = '" + message.getPayload() + "'");
+                    logger.log(Level.INFO, () -> "Received answer: " + "type = " + message.getMessageType() + " & content = '" + message.getMessagePayload() + "'");
                 }
                 System.out.println("Client finished");
             }

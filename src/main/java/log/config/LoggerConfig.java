@@ -8,6 +8,10 @@ import java.io.*;
 import java.util.logging.*;
 
 public class LoggerConfig {
+    private LoggerConfig() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static void configureLogger(Logger logger) {
         configureLoggingProperties();
         configureHandlers(logger);

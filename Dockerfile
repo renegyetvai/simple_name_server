@@ -12,6 +12,7 @@ WORKDIR /app
 RUN apk add dumb-init
 RUN apk add --no-cache curl
 RUN apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community/x86_64/ openjdk17-jre-headless
+RUN apk update && apk upgrade --no-cache
 
 RUN addgroup --system javauser && adduser -S -s /bin/false -G javauser javauser
 COPY --from=build /home/gradle/src/build/libs/*.jar app.jar

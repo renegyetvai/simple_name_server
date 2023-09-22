@@ -9,7 +9,7 @@ import java.net.InetAddress;
 
 public class UDPClient {
 
-    private final static int UDP_BUFFER_SIZE = 512;
+    private static final int UDP_BUFFER_SIZE = 512;
     private final InetAddress serverAddress;
     private final int port;
     private final DatagramSocket clientSocket;

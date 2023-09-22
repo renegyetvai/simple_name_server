@@ -50,16 +50,16 @@ public class Message {
         }
     }
 
-    private final String payload;
+    private final String messagePayload;
     private final int messageType;
 
-    public Message(messageTypes messageType, String payload) {
+    public Message(messageTypes messageType, String messagePayload) {
         this.messageType = messageType.getValue();
-        this.payload = payload;
+        this.messagePayload = messagePayload;
     }
 
-    public String getPayload() {
-        return payload;
+    public String getMessagePayload() {
+        return messagePayload;
     }
 
     public int getMessageType() {
@@ -111,7 +111,7 @@ public class Message {
 
         // Convert message type to bytes
         byte[] type = Integer.toString(this.getMessageType()).getBytes(StandardCharsets.UTF_8);
-        byte[] payload = this.getPayload().getBytes(StandardCharsets.UTF_8);
+        byte[] payload = this.getMessagePayload().getBytes(StandardCharsets.UTF_8);
 
         // Calculate length of payload
         ByteBuffer byteBuffer = ByteBuffer.allocate(type.length + payload.length);

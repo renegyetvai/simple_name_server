@@ -33,7 +33,7 @@ public class NameData {
 
         // Get the node that the name belongs to.
         Node parent = null;
-        if (!(nameParts.length == 1)) {
+        if (nameParts.length != 1) {
             // Create new node for the parent and its parents.
             int cnt = 1;
             String parentName = getRoot(this).getFullName();

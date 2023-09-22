@@ -35,7 +35,7 @@ public class UDPServer implements Runnable {
         accepterThread.start();
 
         // Wait for termination signal
-        while (!terminate) {
+        while (Boolean.TRUE.equals(!terminate)) {
             String input = scanner.nextLine();
             if (input.equals("exit")) {
                 terminate = true;

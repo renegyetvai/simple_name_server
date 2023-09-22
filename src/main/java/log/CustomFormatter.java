@@ -7,11 +7,11 @@ import java.util.logging.LogRecord;
 public class CustomFormatter extends Formatter {
 
     @Override
-    public String format(LogRecord record) {
-        return record.getLongThreadID() + "::" + record.getSourceClassName() + "::"
-                + record.getSourceMethodName() + "::"
-                + new Date(record.getMillis()) + "::"
-                + record.getMessage() + "\n";
+    public String format(LogRecord logRecord) {
+        return logRecord.getLongThreadID() + "::" + logRecord.getSourceClassName() + "::"
+                + logRecord.getSourceMethodName() + "::"
+                + new Date(logRecord.getMillis()) + "::"
+                + logRecord.getMessage() + "\n";
     }
 
 }

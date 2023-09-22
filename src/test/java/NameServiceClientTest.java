@@ -38,7 +38,7 @@ public class NameServiceClientTest {
         message = Message.readFromBytes(answer.getData());
 
         assertEquals(5, message.getMessageType());
-        assertEquals("home 127.0.0.1 80", message.getPayload());
+        assertEquals("home 127.0.0.1 80", message.getMessagePayload());
 
         // send "exit" to cli of server thread
         serverThread.interrupt();
@@ -59,7 +59,7 @@ public class NameServiceClientTest {
 
         message = Message.readFromBytes(answer.getData());
         assertEquals(2, message.getMessageType());
-        assertEquals("home", message.getPayload());
+        assertEquals("home", message.getMessagePayload());
 
         // send "exit" to cli of server thread
         serverThread.interrupt();
@@ -86,8 +86,8 @@ public class NameServiceClientTest {
         messageTwo = Message.readFromBytes(answerTwo.getData());
         assertEquals(5, messageOne.getMessageType());
         assertEquals(5, messageTwo.getMessageType());
-        assertEquals("first 127.0.0.2 80", messageOne.getPayload());
-        assertEquals("second 127.0.0.3 80", messageTwo.getPayload());
+        assertEquals("first 127.0.0.2 80", messageOne.getMessagePayload());
+        assertEquals("second 127.0.0.3 80", messageTwo.getMessagePayload());
 
         // send "exit" to cli of server thread
         serverThread.interrupt();

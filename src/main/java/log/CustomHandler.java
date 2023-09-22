@@ -6,9 +6,9 @@ import java.util.logging.StreamHandler;
 public class CustomHandler extends StreamHandler {
 
     @Override
-    public synchronized void publish(LogRecord record) {
+    public synchronized void publish(LogRecord logRecord) {
         // add own logic to publish
-        super.publish(record);
+        super.publish(logRecord);
     }
 
     @Override

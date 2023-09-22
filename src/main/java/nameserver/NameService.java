@@ -9,8 +9,8 @@ import java.util.logging.*;
 import static log.config.LoggerConfig.configureLogger;
 
 public class NameService implements IService {
-    private final static Logger logger = Logger.getLogger(Node.class.getName());
-    private final static int UDP_BUFFER_SIZE = 512;
+    private static final Logger logger = Logger.getLogger(NameService.class.getName());
+    private static final int UDP_BUFFER_SIZE = 512;
     private final NameData nameData;
 
     public NameService(String rootName) {
@@ -28,7 +28,7 @@ public class NameService implements IService {
 
         // Save message type and payload to variables.
         Message.messageTypes type = message.getMessageTypeEnum(message.getMessageType());
-        String payload = message.getPayload();
+        String payload = message.getMessagePayload();
 
         return handleMessage(type, payload);
     }
@@ -48,23 +48,23 @@ public class NameService implements IService {
                 while (registerAnswer.length() < UDP_BUFFER_SIZE) {
                     registerAnswer.append("\0");
                 }
-                logger.log(Level.INFO, "Registering " + payload.split(" ")[0] + " with IP " + payload.split(" ")[1] + " and port " + payload.split(" ")[2]);
+                logger.log(Level.INFO, () -> "Registering " + payload.split(" ")[0] + " with IP " + payload.split(" ")[1] + " and port " + payload.split(" ")[2]);
                 return new Message(Message.messageTypes.MSG_REGISTER_REPLY, registerAnswer.toString());
             }
             case MSG_RESOLVE_REQUEST -> {
                 Node resolveAnswer = resolveName(payload);
                 assert resolveAnswer != null;
                 String serviceAttributes = resolveAnswer.getName() + " " + resolveAnswer.getIp() + " " + resolveAnswer.getPort();
-                logger.log(Level.INFO, "Resolving " + payload + " to " + serviceAttributes);
+                logger.log(Level.INFO, () -> "Resolving " + payload + " to " + serviceAttributes);
                 return new Message(Message.messageTypes.MSG_RESOLVE_REPLY, serviceAttributes);
             }
             case MSG_DELETE_REQUEST -> {
                 boolean deleteAnswer = deleteName(payload);
                 if (deleteAnswer) {
-                    logger.log(Level.INFO, "Deleting " + payload);
+                    logger.log(Level.INFO, () -> "Deleting " + payload);
                     return new Message(Message.messageTypes.MSG_DELETE_REPLY, "Successfully deleted " + payload);
                 } else {
-                    logger.log(Level.INFO, "Failed to delete " + payload);
+                    logger.log(Level.INFO, () -> "Failed to delete " + payload);
                     return new Message(Message.messageTypes.MSG_DELETE_ERROR, "Failed to delete " + payload);
                 }
             }
