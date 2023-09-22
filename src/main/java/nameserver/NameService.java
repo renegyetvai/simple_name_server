@@ -68,6 +68,7 @@ public class NameService implements IService {
                     return new Message(Message.messageTypes.MSG_DELETE_ERROR, "Failed to delete " + payload);
                 }
             }
+            default -> logger.log(Level.WARNING, () -> "Received unknown message type: " + type);
         }
         return null;
     }
