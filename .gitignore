@@ -166,3 +166,5 @@ gradle-app.setting
 
 # Log files
 **/log/dump/
+/dump/
+**/dump/
