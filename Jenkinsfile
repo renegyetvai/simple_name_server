@@ -23,7 +23,8 @@ pipeline {
         }
         stage('OWASP Scan') {
             steps {
-                dependencyCheck additionalArguments: '--format XML', odcInstallation: 'DP-check'
+                dependencyCheck additionalArguments: '', odcInstallation: 'DP-check'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
         stage('Sonarqube Analysis') {
