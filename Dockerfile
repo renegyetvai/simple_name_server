@@ -1,7 +1,11 @@
 # Build stage
 FROM gradle:jdk17-alpine AS build
 WORKDIR /home/gradle/src
-COPY . .
+# COPY . .
+COPY build.gradle .
+COPY settings.gradle .
+COPY src src
+
 RUN gradle build
 
 # Package stage
