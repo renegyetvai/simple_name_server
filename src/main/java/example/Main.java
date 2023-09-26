@@ -28,7 +28,7 @@ public class Main {
             case "-s" -> {
                 NameService serviceProvider = new NameService("local");
                 Thread serverThread = new Thread(new UDPServer(5555, serviceProvider));
-                logger.log(Level.INFO, "Starting server");
+                logger.log(Level.INFO, "Starting server...");
                 serverThread.start();
                 serverThread.join();
             }
@@ -39,7 +39,7 @@ public class Main {
                 DatagramPacket answerFour;
                 Message[] messages = new Message[4];
 
-                logger.log(Level.INFO, "Starting client");
+                logger.log(Level.INFO, "Starting client...");
                 UDPClient udpClient = new UDPClient("localhost", 5555);
 
                 logger.log(Level.INFO, "Sending messages");
