@@ -1,7 +1,7 @@
 pipeline {
     agent { label 'java-docker-node-1' }
     options {
-        buildDiscarder(logRotator(numToKeepStr: '5'))
+        buildDiscarder(logRotator(numToKeepStr: '15'))
     }
     tools {
         gradle 'gradle751'
